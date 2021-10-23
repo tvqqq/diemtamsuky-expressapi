@@ -1,5 +1,7 @@
 const apiRouter = require("./api.route");
+const adminRouter = require("./admin.route");
 const JwtService = require("../app/services/jwt.service");
+const Auth0Service = require("../app/services/auth0.service");
 const UserController = require("../app/controllers/user.controller");
 
 const route = (app) => {
@@ -12,6 +14,7 @@ const route = (app) => {
   app.use("/api", JwtService.verify, apiRouter);
 
   // Admin Web router
+  app.use("/admin", Auth0Service.verify, adminRouter);
 };
 
 module.exports = route;
