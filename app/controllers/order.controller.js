@@ -1,7 +1,3 @@
-// const {
-//   multipleMongooseToObject,
-//   mongooseToObject,
-// } = require("../../helpers/mongoose");
 const User = require("../models/user.model");
 const Order = require("../models/order.model");
 
@@ -70,6 +66,63 @@ class OrderController {
       res.send({ error: -1, message: "Unknown exception" });
       console.log("API-Exception", error);
     }
+  }
+
+  // [GET] /orders/list
+  list(req, res, next) {
+    Order.find({})
+      .then((orders) => {
+        return res.send({
+          error: 0,
+          message: "Success",
+          data: {
+            orders,
+          },
+        });
+      })
+      .catch(next);
+  }
+
+  // [GET] /orders/:id
+  detail(req, res, next) {
+    Order.findById(req.params._id)
+      .then((order) => {
+        return res.send({
+          error: 0,
+          message: "Success",
+          data: {
+            order,
+          },
+        });
+      })
+      .catch(next);
+  }
+
+  // [PUT] /orders/:id
+  update(req, res, next) {
+    Order.updateOne({ _id: req.params._id }, req.body)
+      .then((order) => {
+        return res.send({
+          error: 0,
+          message: "Success",
+          data: {
+            order,
+          },
+        });
+      })
+      .catch(next);
+  }
+
+  // [DELETE] /orders/:id
+  delete(req, res, next) {
+    Order.deleteOne({ _id: req.params._id })
+      .then(() => {
+        return res.send({
+          error: 0,
+          message: "Success",
+        });
+      })
+      .catch(next);
   }
 }
 

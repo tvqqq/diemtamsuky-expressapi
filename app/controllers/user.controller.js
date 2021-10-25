@@ -1,7 +1,3 @@
-// const {
-//   multipleMongooseToObject,
-//   mongooseToObject,
-// } = require("../../helpers/mongoose");
 const User = require("../models/user.model");
 const ZaloService = require("./../services/zalo.service");
 const JwtService = require("../services/jwt.service");
@@ -59,6 +55,51 @@ class UserController {
       res.send({ error: -1, message: "Unknown exception" });
       console.log("API-Exception", ex);
     }
+  }
+
+  // [GET] /users/list
+  list(req, res, next) {
+    User.find({})
+      .then((users) => {
+        return res.send({
+          error: 0,
+          message: "Success",
+          data: {
+            users,
+          },
+        });
+      })
+      .catch(next);
+  }
+
+  // [GET] /users/:id
+  detail(req, res, next) {
+    User.findById(req.params._id)
+      .then((user) => {
+        return res.send({
+          error: 0,
+          message: "Success",
+          data: {
+            user,
+          },
+        });
+      })
+      .catch(next);
+  }
+
+  // [PUT] /users/:id
+  update(req, res, next) {
+    User.updateOne({ _id: req.params._id }, req.body)
+      .then((user) => {
+        return res.send({
+          error: 0,
+          message: "Success",
+          data: {
+            user,
+          },
+        });
+      })
+      .catch(next);
   }
 }
 

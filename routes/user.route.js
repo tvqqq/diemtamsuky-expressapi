@@ -1,18 +1,12 @@
 const express = require("express");
 const router = express.Router();
 
-// const UserController = require("../app/controllers/user.controller");
+const UserController = require("../app/controllers/user.controller");
 
-// router.get("/list", ProductController.list);
-
-// router.get("/", authMiddlware, TopicController.index);
-
-// router.get("/add", TopicController.add);
-// router.post("/add", TopicController.create);
-
-// router.get("/:_id", TopicController.edit);
-// router.put("/:_id", TopicController.update);
-
-// router.delete("/:_id", TopicController.delete);
+router.get("/list", UserController.list);
+// router.post("/create", UserController.create);
+router.get("/:_id", UserController.detail);
+router.put("/:_id", UserController.update);
+// router.delete("/:_id", UserController.delete);
 
 module.exports = router;
