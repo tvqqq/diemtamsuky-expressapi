@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
 
-const UserController = require("../app/controllers/user.controller");
+// const UserController = require("../app/controllers/user.controller");
 
-router.get("/list", ProductController.list);
+// router.get("/list", ProductController.list);
 
 // router.get("/", authMiddlware, TopicController.index);
 

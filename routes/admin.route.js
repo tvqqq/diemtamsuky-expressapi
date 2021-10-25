@@ -1,12 +1,13 @@
 const express = require("express");
 const router = express.Router();
 
-// const UserController = require("../app/controllers/user.controller");
-const ProductController = require("../app/controllers/product.controller");
-// const OrderController = require("../app/controllers/order.controller");
+const productRouter = require("./product.route");
+router.use("/products", productRouter);
 
-router.get("/products/list", ProductController.list);
-// router.post("/orders/checkout", OrderController.checkout);
-// router.get("/orders/history", OrderController.history);
+const userRouter = require("./user.route");
+router.use("/users", userRouter);
+
+const orderRouter = require("./order.route");
+router.use("/orders", orderRouter);
 
 module.exports = router;

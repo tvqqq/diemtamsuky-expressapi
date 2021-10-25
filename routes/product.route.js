@@ -4,15 +4,9 @@ const router = express.Router();
 const ProductController = require("../app/controllers/product.controller");
 
 router.get("/list", ProductController.list);
-
-// router.get("/", authMiddlware, TopicController.index);
-
-// router.get("/add", TopicController.add);
-// router.post("/add", TopicController.create);
-
-// router.get("/:_id", TopicController.edit);
-// router.put("/:_id", TopicController.update);
-
-// router.delete("/:_id", TopicController.delete);
+router.post("/create", ProductController.create);
+router.get("/:_id", ProductController.detail);
+router.put("/:_id", ProductController.update);
+router.delete("/:_id", ProductController.delete);
 
 module.exports = router;

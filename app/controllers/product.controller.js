@@ -1,11 +1,7 @@
-// const {
-//   multipleMongooseToObject,
-//   mongooseToObject,
-// } = require("../../helpers/mongoose");
 const Product = require("../models/product.model");
 
 class ProductController {
-  // [GET] /list
+  // [GET] /products/list
   list(req, res, next) {
     Product.find({})
       .then((products) => {
@@ -21,47 +17,62 @@ class ProductController {
       .catch(next);
   }
 
-  // // [GET] /topics/add
-  // add(req, res) {
-  //   res.render("topics/add");
-  // }
+  // [POST] /products/create
+  create(req, res, next) {
+    Product.create(req.body)
+      .then((product) => {
+        return res.send({
+          error: 0,
+          message: "Success",
+          data: {
+            product,
+          },
+        });
+      })
+      .catch(next);
+  }
 
-  // // [POST] /topics/add
-  // create(req, res) {
-  //   const data = {
-  //     ...req.body,
-  //     status: 0,
-  //   };
-  //   Topic.create(data);
-  //   res.redirect("/topics");
-  // }
+  // [GET] /products/:id
+  detail(req, res, next) {
+    Product.findById(req.params._id)
+      .then((product) => {
+        return res.send({
+          error: 0,
+          message: "Success",
+          data: {
+            product,
+          },
+        });
+      })
+      .catch(next);
+  }
 
-  // // [GET] /topics/:_id
-  // edit(req, res, next) {
-  //   Topic.findById(req.params._id)
-  //     .then((topic) => {
-  //       res.render("topics/edit", { topic: mongooseToObject(topic) });
-  //     })
-  //     .catch(next);
-  // }
+  // [PUT] /products/:id
+  update(req, res, next) {
+    Product.updateOne({ _id: req.params._id }, req.body)
+      .then((product) => {
+        return res.send({
+          error: 0,
+          message: "Success",
+          data: {
+            product,
+          },
+        });
+      })
+      .catch(next);
+  }
 
-  // // [PUT] /topics/:id
-  // update(req, res, next) {
-  //   Topic.updateOne({ _id: req.params._id }, req.body)
-  //     .then(() => {
-  //       res.redirect("/topics");
-  //     })
-  //     .catch(next);
-  // }
-
-  // // [DELETE] /topics/:id
-  // delete(req, res, next) {
-  //   Topic.deleteOne({ _id: req.params._id })
-  //     .then(() => {
-  //       res.redirect("/topics");
-  //     })
-  //     .catch(next);
-  // }
+  // [DELETE] /products/:id
+  delete(req, res, next) {
+    Product.deleteOne({ _id: req.params._id })
+      .then(() => {
+        return res.send({
+          error: 0,
+          message: "Success",
+        });
+      })
+      .catch(next);
+  }
 }
 
 module.exports = new ProductController();
