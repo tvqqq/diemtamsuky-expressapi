@@ -81,6 +81,7 @@ class OrderController {
   // [GET] /orders/list
   list(req, res, next) {
     Order.find({})
+      .sort({ createdAt: -1 })
       .then((orders) => {
         return res.send({
           error: 0,

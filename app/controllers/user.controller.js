@@ -53,13 +53,14 @@ class UserController {
       }
     } catch (ex) {
       res.send({ error: -1, message: "Unknown exception" });
-      console.log("API-Exception", ex);
+      throw new Error(ex);
     }
   }
 
   // [GET] /users/list
   list(req, res, next) {
     User.find({})
+      .sort({ createdAt: -1 })
       .then((users) => {
         return res.send({
           error: 0,

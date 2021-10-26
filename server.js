@@ -3,6 +3,7 @@ const express = require("express");
 const app = express();
 const port = process.env.PORT || 3001;
 
+// api json
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
@@ -14,58 +15,42 @@ database.connect();
 const cors = require("cors");
 app.use(cors());
 
-/*
-// flash
-const flash = require("express-flash");
-app.use(flash());
-
-// override with POST having ?_method=DELETE
-const methodOverride = require("method-override");
-app.use(methodOverride("_method"));
-
-// set the view engine to handlebar
-const exphbs = require("express-handlebars");
-const path = require("path");
-app.engine(
-  "hbs",
-  exphbs({
-    extname: ".hbs",
-    helpers: require("./helpers/handlebars"),
-  })
-);
-app.set("view engine", "hbs");
-app.set("views", path.join(__dirname, "resources", "views"));
-
-
-// passport local
-const passportConfig = require("./config/passport");
-passportConfig.initPassport();
-
-// session
-const session = require("express-session");
-app.use(
-  session({
-    secret: "learnitsecret",
-    resave: false,
-    saveUninitialized: false,
-  })
-);
-const passport = require("passport");
-app.use(passport.initialize());
-app.use(passport.session());
-
-app.use(function (req, res, next) {
-  res.locals.session = req.session;
-  next();
+// [Sentry] Setting
+const Sentry = require("@sentry/node");
+const Tracing = require("@sentry/tracing");
+Sentry.init({
+  dsn: process.env.SENTRY_DSN,
+  integrations: [
+    // enable HTTP calls tracing
+    new Sentry.Integrations.Http({ tracing: true }),
+    // enable Express.js middleware tracing
+    new Tracing.Integrations.Express({ app }),
+  ],
+  // Set tracesSampleRate to 1.0 to capture 100%
+  // of transactions for performance monitoring.
+  // We recommend adjusting this value in production
+  tracesSampleRate: 1.0,
 });
-*/
+// RequestHandler creates a separate execution context using domains, so that every
+// transaction/span/breadcrumb is attached to its own Hub instance
+app.use(Sentry.Handlers.requestHandler());
+// TracingHandler creates a trace for every incoming request
+app.use(Sentry.Handlers.tracingHandler());
 
 // route
 const route = require("./routes");
 route(app);
 
-// setup public folder
-app.use(express.static("public"));
+// [Sentry] The error handler must be before any other error middleware and after all controllers
+app.use(Sentry.Handlers.errorHandler());
+
+// [Sentry] Optional fallthrough error handler
+app.use(function onError(err, req, res, next) {
+  // The error id is attached to `res.sentry` to be returned
+  // and optionally displayed to the user for support.
+  res.statusCode = 500;
+  res.end(res.sentry + "\n");
+});
 
 // listen
 app.listen(port, () => {
