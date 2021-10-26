@@ -1,5 +1,6 @@
 const User = require("../models/user.model");
 const Order = require("../models/order.model");
+const axios = require("axios");
 
 class OrderController {
   // [POST] /checkout
@@ -30,16 +31,25 @@ class OrderController {
       );
 
       // TODO: send message OA
-      // const detail = cart
-      //   .map((item) => `${item.quantity}x ${item.product.name}`)
-      //   .join(", ");
       // const response = await ZaloService.sendMessage(
       //   req.user.followerId,
       //   `Cảm ơn bạn đã đặt hàng tại Coffee Shop. Chi tiết đơn hàng: ${detail}. Tổng cộng: ${total} VND`
       // );
       // console.log("[OA Message]", response);
 
-      // TODO: alert admin about new order
+      // Send alert to Slack channel
+      const detail = cart
+        .map((item) => `${item.quantity}x ${item.product.name}`)
+        .join(", ");
+
+      axios
+        .post(process.env.SLACK_WEBHOOK_URL, {
+          text: `🚀 Có thêm một đơn hàng mới trên Zalo OA!\n>Chi tiết đơn hàng: ${detail}.\n>Tổng cộng: ${total} VND`,
+        })
+        .then((res) => {})
+        .catch((error) => {
+          console.error(error);
+        });
 
       res.send({
         error: 0,
