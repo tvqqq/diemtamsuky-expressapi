@@ -8,6 +8,7 @@ const Product = new Schema(
     description: String,
     image: String,
     price: { type: Number, default: 0 },
+    status: { type: Boolean, default: false },
   },
   {
     timestamps: true,
