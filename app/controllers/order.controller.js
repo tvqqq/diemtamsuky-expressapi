@@ -43,14 +43,16 @@ class OrderController {
       `;
 
       // Send alert to Zalo admin
-      try {
-        await ZaloService.sendMessage(
-          process.env.ZALO_ADMIN_FOLLOWER_ID,
-          textAlert
-        );
-      } catch (error) {
-        throw new Error(error);
-      }
+      const zaloAdmins = process.env.ZALO_ADMIN_FOLLOWER_ID.split(",");
+      await Promise.all(
+        zaloAdmins.map(async (ad) => {
+          try {
+            await ZaloService.sendMessage(ad, textAlert);
+          } catch (error) {
+            throw new Error(error);
+          }
+        })
+      );
 
       // Send alert to Slack channel
       axios
