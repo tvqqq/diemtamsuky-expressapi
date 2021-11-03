@@ -5,6 +5,10 @@ class ProductController {
   list(req, res, next) {
     Product.find({})
       .then((products) => {
+        // TODO: hidden some products
+        products = products.filter((p) => {
+          return p.image !== "banhbaothit.jpg" && p.image !== "banhflan.jpg";
+        });
         return res.send({
           error: 0,
           message: "Success",
