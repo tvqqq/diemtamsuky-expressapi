@@ -1,6 +1,7 @@
 const User = require("../models/user.model");
 const Order = require("../models/order.model");
 const axios = require("axios");
+const ZaloService = require("./../services/zalo.service");
 
 class OrderController {
   // [POST] /checkout
@@ -30,25 +31,35 @@ class OrderController {
         { upsert: true }
       );
 
-      // TODO: send message OA
-      // const response = await ZaloService.sendMessage(
-      //   req.user.followerId,
-      //   `Cảm ơn bạn đã đặt hàng tại Coffee Shop. Chi tiết đơn hàng: ${detail}. Tổng cộng: ${total} VND`
-      // );
-      // console.log("[OA Message]", response);
-
-      // Send alert to Slack channel
       const detail = cart
         .map((item) => `${item.quantity}x ${item.product.name}`)
         .join(", ");
+      const textAlert = `🚀 Có một đơn mới trên app Zalo!
+      >> Chi tiết đơn hàng: ${detail}.
+      >> Tổng cộng: ${total} VND
+      >> Note: ${note}
+      ---
+      >> Thông tin người đặt: ${name} - ${phone} - ${address}
+      `;
 
+      // Send alert to Zalo admin
+      try {
+        await ZaloService.sendMessage(
+          process.env.ZALO_ADMIN_FOLLOWER_ID,
+          textAlert
+        );
+      } catch (error) {
+        throw new Error(error);
+      }
+
+      // Send alert to Slack channel
       axios
         .post(process.env.SLACK_WEBHOOK_URL, {
-          text: `🚀 Có thêm một đơn hàng mới trên Zalo OA!\n>Chi tiết đơn hàng: ${detail}.\n>Tổng cộng: ${total} VND`,
+          text: textAlert,
         })
         .then((res) => {})
         .catch((error) => {
-          console.error(error);
+          throw new Error(error);
         });
 
       res.send({
@@ -58,7 +69,7 @@ class OrderController {
       });
     } catch (error) {
       res.send({ error: -1, message: "Unknown exception" });
-      console.log("API-Exception", error);
+      throw new Error(error);
     }
   }
 
@@ -74,7 +85,7 @@ class OrderController {
       });
     } catch (error) {
       res.send({ error: -1, message: "Unknown exception" });
-      console.log("API-Exception", error);
+      throw new Error(error);
     }
   }
 
