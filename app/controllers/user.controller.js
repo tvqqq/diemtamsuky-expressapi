@@ -13,6 +13,7 @@ class UserController {
     try {
       // Check access token
       const accessToken = req.body.accessToken;
+      console.log("accessToken", accessToken);
       if (!accessToken) {
         return res.send({ error: -1, message: "Invalid access token" });
       }
@@ -20,6 +21,8 @@ class UserController {
       // Parse zalo profile
       const { id, birthday, name, gender, picture } =
         await ZaloService.getZaloProfile(accessToken);
+      console.log("id", id, name);
+      console.log("get", await ZaloService.getZaloProfile(accessToken));
       let pictureUrl = picture;
       if (picture.data) {
         pictureUrl = picture.data.url;
@@ -41,10 +44,13 @@ class UserController {
         },
         { upsert: true }
       );
+      console.log("user", user);
 
       // Response the jwt
       if (user) {
         const jwt = JwtService.genJSONWebToken(id, 3600);
+        console.log("jwt", jwt);
+
         return res.send({
           error: 0,
           message: "Success",
@@ -55,6 +61,11 @@ class UserController {
       res.send({ error: -1, message: "Unknown exception" });
       throw new Error(ex);
     }
+  }
+
+  async loginCallback(req, res, next) {
+    console.log("loginCallback", req);
+    // https://oauth.zaloapp.com/v4/permission?app_id=<APP_ID>&redirect_uri=<CALLBACK_URL>&code_challenge=<CODE_CHALLENGE>&state=<STATE>
   }
 
   // [GET] /users/list

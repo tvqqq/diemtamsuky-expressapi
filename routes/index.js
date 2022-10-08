@@ -11,6 +11,7 @@ const route = (app) => {
 
   // API for Zalo Router
   app.post("/api/login", UserController.login);
+  app.post("/api/login/callback", UserController.loginCallback);
   app.use("/api", JwtService.verify, apiRouter);
 
   // Admin Web router
